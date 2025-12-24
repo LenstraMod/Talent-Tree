@@ -31,38 +31,23 @@ struct Player{
 };
 
 void createTree(adrTree& Tree);
+bool isEmptyPlayer(adrPlayer player);
+adrTree createNode(string name, string type, string description, int pointRequire, bool isUnlocked, bool isCompleted);
 adrTree createClass(Talent classes);
 adrTree createSkill(Talent skills);
 adrTree createStats(Talent stats);
-adrPlayer createPlayer(adrPlayer player);
-void insertTalent(adrTree& talent);
-void deleteTalent(adrTree& talent);
+adrPlayer createPlayer(string playerName);
+void addChild(adrTree& parent, adrTree& child);
+void insertTalent(adrTree& Tree,adrTree talent, string parentName);
+void deleteSubTree(adrTree talent);
+void deleteTalent(adrTree& talent, string type);
 bool unlocked(adrPlayer &p, adrTree q);
 adrTree searchTalent(adrTree Tree, string name);
 int countTalent(adrTree talent, string type);
-void displayPlayer(adrTree talent);//Ini itu mengeprint semua talent dari player yang isUnlocked
+void initializeTree(adrTree& Tree);
+bool playerHasTalent(adrPlayer player, string talentName);
+void displayPlayer(adrTree Tree, adrPlayer player);//Ini itu mengeprint semua talent dari player yang isUnlocked
 void displayTree(adrTree Tree);
 void resetTalent(adrTree& talent);
 
-#endif // TALENTREE_H_INCLUDED
-//Ketika Moves sudah mengisi semua stats, maka dianggap mastered. Mastered == Dapat memilih moves lain.
-//Ketika Class sudah mengisi semua moves, maka dianggap completed. Completed == Dapat memilih class lain.
-// struct TalentNode {
-//     string key;             // Nama (Game/Class/Move/Stat) yang akan jadi kunci pengurutan
-//     NodeType type;          // Penanda level (misal: CLASS, MOVE)
-    
-//     // Data Game RPG
-//     bool isUnlocked;        // Status apakah sudah diambil
-//     string description;     // Deskripsi tambahan (khusus untuk stats)
-
-//     // Pointer BST
-//     TalentNode* left;    // Anak Kiri (Nama lebih kecil / A-M)
-//     TalentNode* right;   // Anak Kanan (Nama lebih besar / N-Z)
-// };
-
-// struct TalentTree {
-//     TalentNode* root;    // Akar utama pohon
-    
-//     // Tracker Pemain
-//     TalentNode* currentSelection; 
-// };
+#endif 
