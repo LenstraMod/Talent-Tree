@@ -43,11 +43,14 @@ void deleteSubTree(adrTree talent);
 void deleteTalent(adrTree& talent, string type);
 bool unlocked(adrPlayer &p, adrTree q);
 adrTree searchTalent(adrTree Tree, string name);
+adrPlayer searchPlayer(vector<adrPlayer> players, string name);
 int countTalent(adrTree talent, string type);
 void initializeTree(adrTree& Tree);
 bool playerHasTalent(adrPlayer player, string talentName);
 void displayPlayer(adrTree Tree, adrPlayer player);//Ini itu mengeprint semua talent dari player yang isUnlocked
 void displayTree(adrTree Tree);
-void resetTalent(adrTree& talent);
+void resetTalent(adrTree talent, adrPlayer player);
+void fightMonster(adrPlayer& player);
+void clearScreen();
 
 #endif 

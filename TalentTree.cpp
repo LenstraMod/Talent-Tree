@@ -1,7 +1,19 @@
 #include <iostream>
 #include "TalentTree.h"
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <cstdlib>
 
 using namespace std;
+
+void clearScreen() {
+    // This weird string tells the terminal: "Clear screen (2J) and move cursor to top-left (1;1H)"
+   #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
 
 void createTree(adrTree& Tree){
     Tree = nullptr;   
@@ -59,6 +71,19 @@ adrTree searchTalent(adrTree Tree, string name){
 
     return nullptr;
 }
+
+adrPlayer searchPlayer(vector<adrPlayer> players, string name){
+    adrPlayer foundPlayer = nullptr;
+
+    for(adrPlayer p : players){
+        if(p->name == name){
+            foundPlayer = p;
+            break;
+        }
+    }
+
+    return foundPlayer;
+}
 void insertTalent(adrTree& Tree,adrTree talent, string parentName){
     adrTree getParent = searchTalent(Tree, parentName);
 
@@ -78,25 +103,20 @@ void deleteSubTree(adrTree talent){ //untuk menghapus seluruh cabang agar memory
     delete talent;
 }
 void deleteTalent(adrTree& Tree, string type){
-    adrTree target = searchTalent(Tree, type);
+    if(Tree == nullptr) return;
 
-    if (target == nullptr){
-        cout << "Talent tidak ditemukan." << endl;
+    if(Tree->parent == nullptr && Tree->info.name == type){
+        cout << "Cannot delete root talent" << endl;
+        return;
     }
 
-    if(target == Tree){
-        deleteSubTree(Tree);
-        Tree = nullptr;
-        cout << "Root Berhasil dihapus." << endl;
-    }
-
-    for (int i = 0; i < Tree->children.size(); i++)
-    {
-        if(Tree->children[i]->info.type == type){
+    for(int i = 0; i < Tree->children.size(); i++){
+        if(Tree->children[i]->info.name == type){
             deleteSubTree(Tree->children[i]);
             Tree->children.erase(Tree->children.begin() + i);
-            cout << "Talent " << type << " Berhasil Dihapus." << endl;
-        } else {
+            i--;
+            cout << "Talent " << type << " and its subtree deleted." << endl;
+        }else{
             deleteTalent(Tree->children[i], type);
         }
     }
@@ -136,7 +156,21 @@ bool unlocked(adrPlayer &p, adrTree q){
     }
 }
 int countTalent(adrTree talent, string type){
-    return 0;
+    if(talent == nullptr){
+        return 0;
+    }
+    
+    int total = 0;
+
+    if(talent->info.type == type){
+        total = 1;
+    }
+
+    for (int i = 0; i < talent->children.size(); i++){
+        total =+ countTalent(talent->children[i], type);
+    }
+
+    return total;
 }
 
 void initializeTree(adrTree& Tree){
@@ -244,12 +278,15 @@ void displayTree(adrTree Tree){
     else if (Tree->info.type == "Skill") {
         // Add a tab or spaces for indentation
         cout << "\tSkill : " << Tree->info.name << endl;
-    } 
+        cout << "\tPoint Require : " << Tree->info.pointRequire << endl;
+    }
     else if (Tree->info.type == "Stats") {
         // Stats usually don't have names like "Strength", 
         // they have descriptions like "+5 Strength".
         // We print the DESCRIPTION here as per your request.
-        cout << "\t\tStats : " << Tree->info.description << endl;
+        cout << "\t\tStat Name : " << Tree->info.name << endl;
+        cout << "\t\tStat Description : " << Tree->info.description << endl;
+        cout << "\t\tStat Point Require : " << Tree->info.pointRequire << endl;
     } 
     else {
         // Fallback for unknown types
@@ -261,6 +298,30 @@ void displayTree(adrTree Tree){
         displayTree(Tree->children[i]);
     }
 }
-void resetTalent(adrTree& talent){
+void resetTalent(adrTree talent, adrPlayer player){
+    if(talent == nullptr || player == nullptr) return;
 
+    for(int i = 0; i < talent->children.size(); i++){
+        resetTalent(talent->children[i], player);
+    }
+
+    for(int i = 0; i < player->unlockedTalent.size(); i++){
+        if(player->unlockedTalent[i].name == talent->info.name){
+            player->availablePoint += talent->info.pointRequire;
+            player->unlockedTalent.erase(player->unlockedTalent.begin() + i);
+            talent->info.isUnlocked = false;
+            cout << "Talent " << talent->info.name << " has been reset for " << player->name << "." << endl;
+            break;
+        }
+    }
+}
+void fightMonster(adrPlayer& player){
+    cout << player->name << " is fighting a monster!" << endl;
+
+    Sleep(5000);
+
+    int earnedPoints = 10; // Fixed points for simplicity
+    player->availablePoint += earnedPoints;
+
+    cout << "Monster defeated! " << player->name << " earned " << earnedPoints << " talent points." << endl;
 }
