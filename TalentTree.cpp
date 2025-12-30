@@ -7,7 +7,6 @@
 using namespace std;
 
 void clearScreen() {
-    // This weird string tells the terminal: "Clear screen (2J) and move cursor to top-left (1;1H)"
    #ifdef _WIN32
         system("cls");
     #else
@@ -260,18 +259,14 @@ void displayTree(adrTree Tree){
     if (Tree == nullptr) {
         return;
     }
-
-    // 1. Handle ROOT (Don't print "Root", just show children)
     if (Tree->info.name == "Root") {
         cout << "=== WORLD TALENT MAP ===" << endl;
         for (int i = 0; i < Tree->children.size(); i++) {
             displayTree(Tree->children[i]);
-            cout << "------------------------" << endl; // Separator between Classes
+            cout << "------------------------" << endl; 
         }
-        return; // Stop here for Root, don't run the code below
+        return;
     }
-
-    // 2. Custom Print Based on "TYPE"
     if (Tree->info.type == "Class") {
         cout << "Class : " << Tree->info.name << endl;
     } 
@@ -281,19 +276,13 @@ void displayTree(adrTree Tree){
         cout << "\tPoint Require : " << Tree->info.pointRequire << endl;
     }
     else if (Tree->info.type == "Stats") {
-        // Stats usually don't have names like "Strength", 
-        // they have descriptions like "+5 Strength".
-        // We print the DESCRIPTION here as per your request.
         cout << "\t\tStat Name : " << Tree->info.name << endl;
         cout << "\t\tStat Description : " << Tree->info.description << endl;
         cout << "\t\tStat Point Require : " << Tree->info.pointRequire << endl;
     } 
     else {
-        // Fallback for unknown types
         cout << "- " << Tree->info.name << endl;
     }
-
-    // 3. Recurse to Children
     for (int i = 0; i < Tree->children.size(); i++) {
         displayTree(Tree->children[i]);
     }

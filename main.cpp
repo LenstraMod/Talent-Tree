@@ -16,7 +16,7 @@ int main()
 
     while(true){
         clearScreen();
-        cout << "======Prominence IV: Nathadian Era======" << endl;
+        cout << "======Talent Tree======" << endl;
         cout << "1. Create Player" << endl;
         cout << "2. View Talent Tree" << endl;
         cout << "3. Unlock Talent" << endl;
